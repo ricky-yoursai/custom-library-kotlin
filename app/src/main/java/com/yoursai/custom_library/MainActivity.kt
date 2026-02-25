@@ -106,7 +106,10 @@ import android.view.View
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.yoursai.custom_library.util.Utils
+import com.yoursai.custom_library.liquid.activity.LiquidGlassViewActivity
+import com.yoursai.custom_library.liquid.activity.ElasticLiquidGlassViewActivity
+import com.yoursai.custom_library.liquid.activity.TouchEffectActivity
+import com.yoursai.custom_library.liquid.util.Utils
 
 class MainActivity : AppCompatActivity() {
 

@@ -1,4 +1,4 @@
-package com.yoursai.custom_library
+package com.yoursai.custom_library.liquid
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -10,9 +10,9 @@ import android.view.ViewGroup
 import android.view.ViewOutlineProvider
 import android.view.ViewTreeObserver
 import android.widget.FrameLayout
-import androidx.annotation.NonNull
-import com.yoursai.custom_library.impl.Impl
-import com.yoursai.custom_library.impl.LiquidGlassimpl
+import com.yoursai.custom_library.Config
+import com.yoursai.custom_library.liquid.impl.Impl
+import com.yoursai.custom_library.liquid.impl.LiquidGlassimpl
 import java.lang.ref.WeakReference
 
 @SuppressLint("ViewConstructor")

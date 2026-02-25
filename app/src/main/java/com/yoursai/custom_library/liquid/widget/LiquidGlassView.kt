@@ -1,4 +1,4 @@
-package com.yoursai.custom_library.widget
+package com.yoursai.custom_library.liquid.widget
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -15,9 +15,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.NonNull
 import com.yoursai.custom_library.Config
-import com.yoursai.custom_library.LiquidGlass
-import com.yoursai.custom_library.util.LiquidTracker
-import com.yoursai.custom_library.util.Utils
+import com.yoursai.custom_library.liquid.LiquidGlass
+import com.yoursai.custom_library.liquid.util.LiquidTracker
+import com.yoursai.custom_library.liquid.util.Utils
 
 class LiquidGlassView @JvmOverloads constructor(
     context: Context,

@@ -1,4 +1,4 @@
-package com.yoursai.custom_library.impl
+package com.yoursai.custom_library.liquid.impl
 
 
 import android.content.res.Resources
@@ -15,7 +15,6 @@ import com.yoursai.custom_library.R
 import org.intellij.lang.annotations.Language
 import java.io.BufferedReader
 import java.io.IOException
-import java.io.InputStream
 import java.io.InputStreamReader
 import kotlin.math.abs
 import kotlin.math.max

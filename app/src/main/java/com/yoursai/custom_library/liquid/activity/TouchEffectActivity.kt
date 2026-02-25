@@ -1,11 +1,12 @@
-package com.yoursai.custom_library
+package com.yoursai.custom_library.liquid.activity
 
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
-import com.yoursai.custom_library.util.Utils
-import com.yoursai.custom_library.widget.LiquidGlassView
+import com.yoursai.custom_library.R
+import com.yoursai.custom_library.liquid.util.Utils
+import com.yoursai.custom_library.liquid.widget.LiquidGlassView
 
 class TouchEffectActivity : AppCompatActivity() {
 

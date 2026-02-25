@@ -25,17 +25,17 @@
 
          <!-- 添加缺失的 Activity 声明 -->
         <activity
-            android:name=".LiquidGlassViewActivity"
+            android:name=".liquid.activity.LiquidGlassViewActivity"
             android:exported="false"
             android:theme="@style/Theme.Custom_library" />
             
         <activity
-            android:name=".ElasticLiquidGlassViewActivity"
+            android:name=".liquid.activity.ElasticLiquidGlassViewActivity"
             android:exported="false"
             android:theme="@style/Theme.Custom_library" />
             
         <activity
-            android:name=".TouchEffectActivity"
+            android:name=".liquid.activity.TouchEffectActivity"
             android:exported="false"
             android:theme="@style/Theme.Custom_library" />
     </application>

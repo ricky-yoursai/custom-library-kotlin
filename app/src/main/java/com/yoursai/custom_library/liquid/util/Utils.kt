@@ -1,4 +1,4 @@
-package com.yoursai.custom_library.util
+package com.yoursai.custom_library.liquid.util
 
 import android.annotation.SuppressLint
 import android.content.Context

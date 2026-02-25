@@ -1,4 +1,4 @@
-package com.yoursai.custom_library
+package com.yoursai.custom_library.liquid.activity
 
 
 import android.graphics.Bitmap
@@ -13,8 +13,9 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import com.yoursai.custom_library.util.Utils
-import com.yoursai.custom_library.widget.LiquidGlassView
+import com.yoursai.custom_library.R
+import com.yoursai.custom_library.liquid.util.Utils
+import com.yoursai.custom_library.liquid.widget.LiquidGlassView
 import java.io.IOException
 import java.io.InputStream
 
