@@ -1,12 +1,13 @@
-package com.yoursai.custom_library.liquid.activity
+package com.yoursai.custom_library.activity
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import com.yoursai.custom_library.R
-import com.yoursai.custom_library.liquid.util.Utils
-import com.yoursai.custom_library.liquid.widget.LiquidGlassView
+import com.yoursai.library.liquid.util.Utils
+import com.yoursai.library.liquid.widget.LiquidGlassView
 
 class TouchEffectActivity : AppCompatActivity() {
 
@@ -19,8 +20,8 @@ class TouchEffectActivity : AppCompatActivity() {
                         or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                         or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                 )
-        window.statusBarColor = android.graphics.Color.TRANSPARENT
-        window.navigationBarColor = android.graphics.Color.TRANSPARENT
+        window.statusBarColor = Color.TRANSPARENT
+        window.navigationBarColor = Color.TRANSPARENT
 
         setContentView(R.layout.activity_touch_effect)
         Utils.transparentStatusBar(window)

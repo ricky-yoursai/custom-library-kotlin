@@ -1,4 +1,4 @@
-package com.yoursai.custom_library.liquid.impl
+package com.yoursai.library.liquid.impl
 
 
 import android.content.res.Resources
@@ -10,8 +10,8 @@ import android.graphics.Shader
 import android.os.Build
 import android.view.View
 import androidx.annotation.RequiresApi
-import com.yoursai.custom_library.Config
-import com.yoursai.custom_library.R
+import com.yoursai.library.Config
+import com.yoursai.library.R
 import org.intellij.lang.annotations.Language
 import java.io.BufferedReader
 import java.io.IOException

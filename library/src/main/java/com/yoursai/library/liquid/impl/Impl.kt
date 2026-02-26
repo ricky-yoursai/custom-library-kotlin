@@ -1,4 +1,4 @@
-package com.yoursai.custom_library.liquid.impl
+package com.yoursai.library.liquid.impl
 
 import android.graphics.Canvas
 

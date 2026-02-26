@@ -24,3 +24,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "custom_library"
 include(":app")
+include(":library")

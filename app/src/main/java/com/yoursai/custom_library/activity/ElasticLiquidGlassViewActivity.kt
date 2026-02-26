@@ -1,8 +1,9 @@
-package com.yoursai.custom_library.liquid.activity
+package com.yoursai.custom_library.activity
 
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
@@ -14,8 +15,8 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.yoursai.custom_library.R
-import com.yoursai.custom_library.liquid.util.Utils
-import com.yoursai.custom_library.liquid.widget.LiquidGlassView
+import com.yoursai.library.liquid.util.Utils
+import com.yoursai.library.liquid.widget.LiquidGlassView
 import java.io.IOException
 import java.io.InputStream
 
@@ -33,8 +34,8 @@ class ElasticLiquidGlassViewActivity : AppCompatActivity() {
                         or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                         or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                 )
-        window.statusBarColor = android.graphics.Color.TRANSPARENT
-        window.navigationBarColor = android.graphics.Color.TRANSPARENT
+        window.statusBarColor = Color.TRANSPARENT
+        window.navigationBarColor = Color.TRANSPARENT
 
         pickMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
             uri?.let {

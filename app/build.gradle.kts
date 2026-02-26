@@ -60,4 +60,6 @@ dependencies {
     // Source: https://mvnrepository.com/artifact/com.google.android.material/material
     implementation("com.google.android.material:material:1.13.0")
     implementation(libs.androidx.activity)
+    //
+    implementation(project(":library"))
 }

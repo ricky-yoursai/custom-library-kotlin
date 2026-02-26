@@ -35,7 +35,7 @@
         </RelativeLayout>
     </FrameLayout>
 
-    <com.yoursai.custom_library.liquid.widget.LiquidGlassView
+    <com.yoursai.library.liquid.widget.LiquidGlassView
         android:id="@+id/liquidGlassView"
         android:layout_width="100dp"
         android:layout_height="75dp"

@@ -16,7 +16,7 @@
             android:src="@drawable/image" />
     </FrameLayout>
 
-    <com.yoursai.custom_library.liquid.widget.LiquidGlassView
+    <com.yoursai.library.liquid.widget.LiquidGlassView
         android:id="@+id/liquid_glass_view"
         android:layout_width="200dp"
         android:layout_height="200dp"

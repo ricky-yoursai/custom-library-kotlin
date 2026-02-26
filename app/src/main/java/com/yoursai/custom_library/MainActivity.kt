@@ -1,101 +1,3 @@
-//package com.yoursai.custom_library
-//
-//import android.os.Bundle
-//import androidx.activity.ComponentActivity
-//import androidx.activity.compose.setContent
-//import androidx.activity.enableEdgeToEdge
-//import androidx.compose.foundation.layout.fillMaxSize
-//import androidx.compose.foundation.layout.padding
-//import androidx.compose.material3.Scaffold
-//import androidx.compose.material3.Text
-//import androidx.compose.runtime.Composable
-//import androidx.compose.ui.Modifier
-//import androidx.compose.ui.tooling.preview.Preview
-//import com.yoursai.custom_library.ui.theme.Custom_libraryTheme
-//
-//class MainActivity : ComponentActivity() {
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//        enableEdgeToEdge()
-//        setContent {
-//            Custom_libraryTheme {
-//                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-//                    Greeting(
-//                        name = "Android",
-//                        modifier = Modifier.padding(innerPadding)
-//                    )
-//                }
-//            }
-//        }
-//    }
-//}
-//
-//@Composable
-//fun Greeting(name: String, modifier: Modifier = Modifier) {
-//    Text(
-//        text = "Hello $name!",
-//        modifier = modifier
-//    )
-//}
-//
-//@Preview(showBackground = true)
-//@Composable
-//fun GreetingPreview() {
-//    Custom_libraryTheme {
-//        Greeting("Android")
-//    }
-//}
-
-
-//package com.yoursai.custom_library
-//
-//import android.content.Intent
-//import android.net.Uri
-//import android.os.Bundle
-//import android.view.View
-//import androidx.appcompat.app.AppCompatActivity
-//import com.google.android.material.dialog.MaterialAlertDialogBuilder
-//import com.yoursai.custom_library.util.Utils
-//
-//class MainActivity : AppCompatActivity() {
-//
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//
-//        // 使用原生方法替代 EdgeToEdge
-//        window.decorView.systemUiVisibility = (
-//                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-//                        or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-//                        or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-//                )
-//        window.statusBarColor = android.graphics.Color.TRANSPARENT
-//        window.navigationBarColor = android.graphics.Color.TRANSPARENT
-//
-//        setContentView(R.layout.activity_main)
-//        Utils.transparentStatusBar(window)
-//        Utils.transparentNavigationBar(window)
-//
-//        MaterialAlertDialogBuilder(this)
-//            .setTitle("Hello")
-//            .setMessage(getString(R.string.a2))
-//            .setNegativeButton("OK", null)
-//            .show()
-//
-//        findViewById<android.view.View>(R.id.liquidglassview).setOnClickListener {
-//            startActivity(Intent(this, LiquidGlassViewActivity::class.java))
-//        }
-//        findViewById<android.view.View>(R.id.elasticliquidglassview).setOnClickListener {
-//            startActivity(Intent(this, ElasticLiquidGlassViewActivity::class.java))
-//        }
-//        findViewById<android.view.View>(R.id.toucheffectview).setOnClickListener {
-//            startActivity(Intent(this, TouchEffectActivity::class.java))
-//        }
-//        findViewById<android.view.View>(R.id.github).setOnClickListener {
-//            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/QmDeve/AndroidLiquidGlassView")))
-//        }
-//    }
-//}
-
 package com.yoursai.custom_library
 
 import android.content.Intent
@@ -106,10 +8,10 @@ import android.view.View
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.yoursai.custom_library.liquid.activity.LiquidGlassViewActivity
-import com.yoursai.custom_library.liquid.activity.ElasticLiquidGlassViewActivity
-import com.yoursai.custom_library.liquid.activity.TouchEffectActivity
-import com.yoursai.custom_library.liquid.util.Utils
+import com.yoursai.custom_library.activity.LiquidGlassViewActivity
+import com.yoursai.custom_library.activity.ElasticLiquidGlassViewActivity
+import com.yoursai.custom_library.activity.TouchEffectActivity
+import com.yoursai.library.liquid.util.Utils
 
 class MainActivity : AppCompatActivity() {
 

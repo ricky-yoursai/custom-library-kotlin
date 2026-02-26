@@ -1,4 +1,4 @@
-package com.yoursai.custom_library.liquid.util
+package com.yoursai.library.liquid.util
 
 import android.os.Handler
 import android.os.Looper
