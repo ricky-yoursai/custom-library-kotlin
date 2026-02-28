@@ -1,4 +1,4 @@
-package com.yoursai.custom_library
+﻿package com.yoursai.custom_library
 
 import android.content.Intent
 import android.net.Uri
@@ -11,6 +11,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.yoursai.custom_library.activity.LiquidGlassViewActivity
 import com.yoursai.custom_library.activity.ElasticLiquidGlassViewActivity
 import com.yoursai.custom_library.activity.TouchEffectActivity
+import com.yoursai.custom_library.activity.LiquidTabBarActivity
 import com.yoursai.library.liquid.util.Utils
 
 class MainActivity : AppCompatActivity() {
@@ -23,7 +24,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         try {
-            // 使用原生方法替代 EdgeToEdge
+            // 浣跨敤鍘熺敓鏂规硶鏇夸唬 EdgeToEdge
             window.decorView.systemUiVisibility = (
                     View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                             or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
@@ -36,7 +37,7 @@ class MainActivity : AppCompatActivity() {
             Utils.transparentStatusBar(window)
             Utils.transparentNavigationBar(window)
 
-            // 检查 BlurButtonView 兼容性
+            // 妫€鏌?BlurButtonView 鍏煎鎬?
             checkBlurButtonViewCompatibility()
 
             MaterialAlertDialogBuilder(this)
@@ -49,39 +50,39 @@ class MainActivity : AppCompatActivity() {
 
         } catch (e: Exception) {
             Log.e(TAG, "Error in onCreate", e)
-            showErrorDialog("应用启动失败: ${e.message}")
+            showErrorDialog("搴旂敤鍚姩澶辫触: ${e.message}")
         }
     }
 
     /**
-     * 检查 BlurButtonView 兼容性
+     * 妫€鏌?BlurButtonView 鍏煎鎬?
      */
     private fun checkBlurButtonViewCompatibility() {
         try {
-            // 尝试创建 BlurButtonView 实例来测试原生库是否可用
+            // 灏濊瘯鍒涘缓 BlurButtonView 瀹炰緥鏉ユ祴璇曞師鐢熷簱鏄惁鍙敤
             val testView = com.qmdeve.blurview.widget.BlurButtonView(this)
             Log.d(TAG, "BlurButtonView is compatible")
 
-            // 如果兼容，隐藏预览按钮，显示真实按钮
+            // 濡傛灉鍏煎锛岄殣钘忛瑙堟寜閽紝鏄剧ず鐪熷疄鎸夐挳
             hidePreviewButtons()
 
         } catch (e: UnsatisfiedLinkError) {
             Log.e(TAG, "BlurButtonView native library not found", e)
-            // 如果原生库不可用，显示错误信息并只使用预览按钮
+            // 濡傛灉鍘熺敓搴撲笉鍙敤锛屾樉绀洪敊璇俊鎭苟鍙娇鐢ㄩ瑙堟寜閽?
             showErrorDialog(
-                "设备不支持 BlurButtonView 功能\n\n" +
-                        "原因: 原生库加载失败\n" +
-                        "建议: 使用支持的设备或更新应用",
+                "璁惧涓嶆敮鎸?BlurButtonView 鍔熻兘\n\n" +
+                        "鍘熷洜: 鍘熺敓搴撳姞杞藉け璐n" +
+                        "寤鸿: 浣跨敤鏀寔鐨勮澶囨垨鏇存柊搴旂敤",
                 showOnly = true
             )
-            // 保持预览按钮可见，隐藏真实按钮
+            // 淇濇寔棰勮鎸夐挳鍙锛岄殣钘忕湡瀹炴寜閽?
             keepPreviewButtonsOnly()
 
         } catch (e: Exception) {
             Log.e(TAG, "BlurButtonView compatibility check failed", e)
             showErrorDialog(
-                "BlurButtonView 兼容性检查失败\n\n" +
-                        "错误: ${e.message}",
+                "BlurButtonView 鍏煎鎬ф鏌ュけ璐n\n" +
+                        "閿欒: ${e.message}",
                 showOnly = true
             )
             keepPreviewButtonsOnly()
@@ -89,11 +90,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * 设置点击监听器
+     * 璁剧疆鐐瑰嚮鐩戝惉鍣?
      */
     private fun setupClickListeners() {
         try {
-            // 只有当 BlurButtonView 可用时才设置这些监听器
+            // 鍙湁褰?BlurButtonView 鍙敤鏃舵墠璁剧疆杩欎簺鐩戝惉鍣?
             if (isBlurButtonViewAvailable()) {
                 findViewById<View>(R.id.liquidglassview)?.setOnClickListener {
                     startActivity(Intent(this, LiquidGlassViewActivity::class.java))
@@ -104,9 +105,16 @@ class MainActivity : AppCompatActivity() {
                 findViewById<View>(R.id.toucheffectview)?.setOnClickListener {
                     startActivity(Intent(this, TouchEffectActivity::class.java))
                 }
+                findViewById<View>(R.id.liquidtabbaractivity)?.setOnClickListener {
+                    startActivity(Intent(this, LiquidTabBarActivity::class.java))
+                }
             }
 
-            // GitHub 按钮始终可用（使用预览按钮）
+            findViewById<View>(R.id.liquidtabbaractivity_preview)?.setOnClickListener {
+                startActivity(Intent(this, LiquidTabBarActivity::class.java))
+            }
+
+            // GitHub 鎸夐挳濮嬬粓鍙敤锛堜娇鐢ㄩ瑙堟寜閽級
             findViewById<View>(R.id.github_preview)?.setOnClickListener {
                 startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/QmDeve/AndroidLiquidGlassView")))
             }
@@ -117,7 +125,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * 检查 BlurButtonView 是否可用
+     * 妫€鏌?BlurButtonView 鏄惁鍙敤
      */
     private fun isBlurButtonViewAvailable(): Boolean {
         return try {
@@ -128,20 +136,22 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * 隐藏预览按钮，显示真实的 BlurButtonView
+     * 闅愯棌棰勮鎸夐挳锛屾樉绀虹湡瀹炵殑 BlurButtonView
      */
     private fun hidePreviewButtons() {
         try {
-            // 隐藏预览按钮
+            // 闅愯棌棰勮鎸夐挳
             findViewById<Button>(R.id.liquidglassview_preview)?.visibility = View.GONE
             findViewById<Button>(R.id.elasticliquidglassview_preview)?.visibility = View.GONE
             findViewById<Button>(R.id.toucheffectview_preview)?.visibility = View.GONE
+            findViewById<Button>(R.id.liquidtabbaractivity_preview)?.visibility = View.GONE
             findViewById<Button>(R.id.github_preview)?.visibility = View.GONE
 
-            // 显示真实按钮
+            // 鏄剧ず鐪熷疄鎸夐挳
             findViewById<View>(R.id.liquidglassview)?.visibility = View.VISIBLE
             findViewById<View>(R.id.elasticliquidglassview)?.visibility = View.VISIBLE
             findViewById<View>(R.id.toucheffectview)?.visibility = View.VISIBLE
+            findViewById<View>(R.id.liquidtabbaractivity)?.visibility = View.VISIBLE
             findViewById<View>(R.id.github)?.visibility = View.VISIBLE
 
         } catch (e: Exception) {
@@ -150,20 +160,22 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * 只保持预览按钮可见，隐藏真实按钮
+     * 鍙繚鎸侀瑙堟寜閽彲瑙侊紝闅愯棌鐪熷疄鎸夐挳
      */
     private fun keepPreviewButtonsOnly() {
         try {
-            // 显示预览按钮
+            // 鏄剧ず棰勮鎸夐挳
             findViewById<Button>(R.id.liquidglassview_preview)?.visibility = View.VISIBLE
             findViewById<Button>(R.id.elasticliquidglassview_preview)?.visibility = View.VISIBLE
             findViewById<Button>(R.id.toucheffectview_preview)?.visibility = View.VISIBLE
+            findViewById<Button>(R.id.liquidtabbaractivity_preview)?.visibility = View.VISIBLE
             findViewById<Button>(R.id.github_preview)?.visibility = View.VISIBLE
 
-            // 隐藏真实按钮
+            // 闅愯棌鐪熷疄鎸夐挳
             findViewById<View>(R.id.liquidglassview)?.visibility = View.GONE
             findViewById<View>(R.id.elasticliquidglassview)?.visibility = View.GONE
             findViewById<View>(R.id.toucheffectview)?.visibility = View.GONE
+            findViewById<View>(R.id.liquidtabbaractivity)?.visibility = View.GONE
             findViewById<View>(R.id.github)?.visibility = View.GONE
 
         } catch (e: Exception) {
@@ -172,17 +184,17 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * 显示错误对话框
+     * 鏄剧ず閿欒瀵硅瘽妗?
      */
     private fun showErrorDialog(message: String, showOnly: Boolean = false) {
         try {
             val builder = MaterialAlertDialogBuilder(this)
-                .setTitle("错误")
+                .setTitle("閿欒")
                 .setMessage(message)
-                .setPositiveButton("确定", null)
+                .setPositiveButton("纭畾", null)
 
             if (!showOnly) {
-                builder.setNegativeButton("忽略", null)
+                builder.setNegativeButton("蹇界暐", null)
             }
 
             builder.show()
@@ -191,3 +203,4 @@ class MainActivity : AppCompatActivity() {
         }
     }
 }
+

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
@@ -11,6 +11,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Custom_library">
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -18,26 +19,30 @@
             android:theme="@style/Theme.Custom_library">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-         <!-- 添加缺失的 Activity 声明 -->
         <activity
             android:name=".activity.LiquidGlassViewActivity"
             android:exported="false"
             android:theme="@style/Theme.Custom_library" />
-            
+
         <activity
             android:name=".activity.ElasticLiquidGlassViewActivity"
             android:exported="false"
             android:theme="@style/Theme.Custom_library" />
-            
+
         <activity
             android:name=".activity.TouchEffectActivity"
             android:exported="false"
             android:theme="@style/Theme.Custom_library" />
+
+        <activity
+            android:name=".activity.LiquidTabBarActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Custom_library" />
+
     </application>
 
 </manifest>

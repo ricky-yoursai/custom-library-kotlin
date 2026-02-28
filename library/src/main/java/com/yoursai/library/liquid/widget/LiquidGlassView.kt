@@ -13,7 +13,6 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.NonNull
 import com.yoursai.library.Config
 import com.yoursai.library.liquid.LiquidGlass
 import com.yoursai.library.liquid.util.LiquidTracker
@@ -26,7 +25,7 @@ class LiquidGlassView @JvmOverloads constructor(
 ) : ViewGroup(context, attrs, defStyleAttr) {
 
     private var glass: LiquidGlass? = null
-    private var customSource: ViewGroup? = null
+    private var customSource: View? = null
     private val context: Context = context
 
     private var cornerRadius = Utils.dp2px(resources, 40f)
@@ -117,11 +116,11 @@ class LiquidGlassView @JvmOverloads constructor(
     /**
      * Bind sampling source
      *
-     * @param source ViewGroup
+     * @param source View
      */
-    fun bind(source: ViewGroup?) {
+    fun bind(source: View?) {
         this.customSource = source
-        if (glass != null && source != null) {
+        if (glass != null) {
             glass!!.init(source)
         }
     }
@@ -347,7 +346,7 @@ class LiquidGlassView @JvmOverloads constructor(
         addView(glass, lp)
 
         val source = customSource
-        if (source == null && parent is ViewGroup) {
+        if (source == null) {
             return
         }
         glass?.init(source)

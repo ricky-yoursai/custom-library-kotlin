@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -8,7 +8,7 @@
     android:gravity="center"
     android:orientation="vertical">
 
-    <!-- 真实的 BlurButtonView (预览时隐藏) -->
+    <!-- 鐪熷疄鐨?BlurButtonView (棰勮鏃堕殣钘? -->
     <com.qmdeve.blurview.widget.BlurButtonView
         android:id="@+id/liquidglassview"
         android:layout_width="wrap_content"
@@ -20,7 +20,7 @@
         app:overlayColor="#0248FB"
         tools:visibility="gone" />
 
-    <!-- 预览替代按钮 (预览时显示) -->
+    <!-- 棰勮鏇夸唬鎸夐挳 (棰勮鏃舵樉绀? -->
     <Button
         android:id="@+id/liquidglassview_preview"
         android:layout_width="wrap_content"
@@ -30,7 +30,7 @@
         android:background="@drawable/preview_button_bg"
         tools:visibility="visible" />
 
-    <!-- 真实的 BlurButtonView (预览时隐藏) -->
+    <!-- 鐪熷疄鐨?BlurButtonView (棰勮鏃堕殣钘? -->
     <com.qmdeve.blurview.widget.BlurButtonView
         android:id="@+id/elasticliquidglassview"
         android:layout_width="wrap_content"
@@ -42,7 +42,7 @@
         app:overlayColor="#0248FB"
         tools:visibility="gone" />
 
-    <!-- 预览替代按钮 (预览时显示) -->
+    <!-- 棰勮鏇夸唬鎸夐挳 (棰勮鏃舵樉绀? -->
     <Button
         android:id="@+id/elasticliquidglassview_preview"
         android:layout_width="wrap_content"
@@ -52,7 +52,7 @@
         android:background="@drawable/preview_button_bg"
         tools:visibility="visible" />
 
-    <!-- 真实的 BlurButtonView (预览时隐藏) -->
+    <!-- 鐪熷疄鐨?BlurButtonView (棰勮鏃堕殣钘? -->
     <com.qmdeve.blurview.widget.BlurButtonView
         android:id="@+id/toucheffectview"
         android:layout_width="wrap_content"
@@ -64,7 +64,7 @@
         app:overlayColor="#0248FB"
         tools:visibility="gone" />
 
-    <!-- 预览替代按钮 (预览时显示) -->
+    <!-- 棰勮鏇夸唬鎸夐挳 (棰勮鏃舵樉绀? -->
     <Button
         android:id="@+id/toucheffectview_preview"
         android:layout_width="wrap_content"
@@ -73,8 +73,29 @@
         android:textColor="@color/white"
         android:background="@drawable/preview_button_bg"
         tools:visibility="visible" />
+    <!-- 鐪熷疄鐨?BlurButtonView (棰勮鏃堕殣钘? -->
+    <com.qmdeve.blurview.widget.BlurButtonView
+        android:id="@+id/liquidtabbaractivity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Liquid TabBar Activity"
+        android:textColor="@color/white"
+        app:buttonCornerRadius="99dp"
+        app:buttonTextBold="true"
+        app:overlayColor="#0248FB"
+        tools:visibility="gone" />
 
-    <!-- 真实的 BlurButtonView (预览时隐藏) -->
+    <!-- 棰勮鏇夸唬鎸夐挳 (棰勮鏃舵樉绀? -->
+    <Button
+        android:id="@+id/liquidtabbaractivity_preview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Liquid TabBar Activity"
+        android:textColor="@color/white"
+        android:background="@drawable/preview_button_bg"
+        tools:visibility="visible" />
+
+    <!-- 鐪熷疄鐨?BlurButtonView (棰勮鏃堕殣钘? -->
     <com.qmdeve.blurview.widget.BlurButtonView
         android:id="@+id/github"
         android:layout_width="wrap_content"
@@ -89,7 +110,7 @@
         app:buttonIconSize="20dp"
         tools:visibility="gone" />
 
-    <!-- 预览替代按钮 (预览时显示) -->
+    <!-- 棰勮鏇夸唬鎸夐挳 (棰勮鏃舵樉绀? -->
     <Button
         android:id="@+id/github_preview"
         android:layout_width="wrap_content"
@@ -100,3 +121,4 @@
         tools:visibility="visible" />
 
 </LinearLayout>
+

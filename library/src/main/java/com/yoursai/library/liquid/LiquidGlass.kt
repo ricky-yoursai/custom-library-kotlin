@@ -22,7 +22,7 @@ class LiquidGlass(
 ) : FrameLayout(context) {
 
     private var impl: Impl? = null
-    private var target: ViewGroup? = null
+    private var target: View? = null
     private var listenerAdded = false
 
     private class PreDrawListener(liquidGlass: LiquidGlass) : ViewTreeObserver.OnPreDrawListener {
@@ -48,17 +48,19 @@ class LiquidGlass(
         init()
     }
 
-    fun init(target: ViewGroup?) {
+    fun init(target: View?) {
         this.target?.let { removePreDrawListener() }
 
         this.target = target
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            impl = LiquidGlassimpl(this, target!!, config)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && target != null) {
+            impl = LiquidGlassimpl(this, target, config)
             addPreDrawListener()
             requestLayout()
             invalidate()
         } else {
+            impl?.dispose()
+            impl = null
             removePreDrawListener()
         }
     }
