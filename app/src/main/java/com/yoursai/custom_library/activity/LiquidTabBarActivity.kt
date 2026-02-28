@@ -21,7 +21,7 @@ class LiquidTabBarActivity : AppCompatActivity() {
         val liquidTabBar: LiquidTabBar = findViewById(R.id.liquidTabBar)
         liquidTabBar.bindBackground(findViewById(R.id.pageBackground))
 
-        liquidTabBar.selectedColor = Color.parseColor("#FF4081")
+        liquidTabBar.selectedColor = Color.RED
         liquidTabBar.unselectedColor = Color.parseColor("#D9D9D9")
         liquidTabBar.animationDuration = 250L
 

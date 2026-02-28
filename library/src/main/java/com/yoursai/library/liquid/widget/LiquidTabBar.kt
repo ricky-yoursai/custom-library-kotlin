@@ -5,7 +5,6 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import android.graphics.Path
 import android.graphics.RectF
 import android.graphics.drawable.ColorDrawable
 import android.util.AttributeSet
@@ -18,6 +17,7 @@ import com.yoursai.library.Config
 import com.yoursai.library.liquid.LiquidGlass
 import com.yoursai.library.liquid.util.Utils
 import kotlin.math.abs
+import kotlin.math.min
 
 class LiquidTabBar @JvmOverloads constructor(
     context: Context,
@@ -44,7 +44,7 @@ class LiquidTabBar @JvmOverloads constructor(
     private var selectedIndex = 0
     private var onTabSelectedListener: ((Int) -> Unit)? = null
 
-    var selectedColor = Color.BLUE
+    var selectedColor = Color.RED
     var unselectedColor = Color.GRAY
     var animationDuration = 300L
     var tabPadding = 16f
@@ -53,12 +53,15 @@ class LiquidTabBar @JvmOverloads constructor(
         textAlign = Paint.Align.CENTER
         textSize = 12f * resources.displayMetrics.density
     }
-    private val selectedPaint = Paint(Paint.ANTI_ALIAS_FLAG)
-    private val selectedPath = Path()
-    private val clipPath = Path()
     private var animator: ValueAnimator? = null
     private var animatedIndex = 0f
     private val tabRects = mutableListOf<RectF>()
+
+    private var bubbleView: LiquidGlassView? = null
+    private var bubbleSizePx = 0f
+    private var liquidDraggableEnabled = true
+    private var liquidElasticEnabled = true
+    private var liquidTouchEffectEnabled = false
 
     init {
         setWillNotDraw(false)
@@ -71,12 +74,21 @@ class LiquidTabBar @JvmOverloads constructor(
             else -> findDefaultBackgroundSource()
         }
         glass?.init(customSource)
+        bubbleView?.bind(customSource)
     }
 
     fun setItems(items: List<TabItem>) {
         tabItems.clear()
         tabItems.addAll(items)
         tabRects.clear()
+        if (selectedIndex !in tabItems.indices) {
+            selectedIndex = 0
+        }
+        animatedIndex = selectedIndex.toFloat()
+        if (width > 0 && height > 0) {
+            updateTabRects()
+            updateBubbleGeometry()
+        }
         invalidate()
     }
 
@@ -93,20 +105,24 @@ class LiquidTabBar @JvmOverloads constructor(
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         ensureGlass()
+        ensureBubble()
         if (!hasExplicitSourceBinding && customSource == null) {
             customSource = findDefaultBackgroundSource()
         }
         glass?.init(customSource)
+        bubbleView?.bind(customSource)
     }
 
     override fun onDetachedFromWindow() {
         removeGlass()
+        removeBubble()
         super.onDetachedFromWindow()
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
         updateTabRects()
+        updateBubbleGeometry()
         if (w > 0 && h > 0) {
             if (cornerRadius > h / 2f) {
                 cornerRadius = h / 2f
@@ -123,28 +139,6 @@ class LiquidTabBar @JvmOverloads constructor(
         super.dispatchDraw(canvas)
         if (tabItems.isEmpty()) return
 
-        val tabWidth = width / tabItems.size.toFloat()
-        val selectedCenterX = (animatedIndex + 0.5f) * tabWidth
-
-        selectedPaint.color = selectedColor
-        selectedPath.reset()
-        selectedPath.addCircle(selectedCenterX, height / 2f, tabWidth * 0.3f, Path.Direction.CW)
-
-        clipPath.reset()
-        clipPath.addRoundRect(
-            0f,
-            0f,
-            width.toFloat(),
-            height.toFloat(),
-            cornerRadius,
-            cornerRadius,
-            Path.Direction.CW
-        )
-        canvas.save()
-        canvas.clipPath(clipPath)
-        canvas.drawPath(selectedPath, selectedPaint)
-        canvas.restore()
-
         for (i in tabItems.indices) {
             val rect = tabRects.getOrNull(i) ?: continue
             val icon = context.getDrawable(tabItems[i].icon)
@@ -157,7 +151,7 @@ class LiquidTabBar @JvmOverloads constructor(
             }
 
             tabItems[i].title?.let { title ->
-                textPaint.color = if (abs(i - animatedIndex) < 0.5f) Color.WHITE else unselectedColor
+                textPaint.color = if (abs(i - animatedIndex) < 0.5f) selectedColor else unselectedColor
                 val textY = height - 8f * resources.displayMetrics.density
                 canvas.drawText(title, rect.centerX(), textY, textPaint)
             }
@@ -171,10 +165,9 @@ class LiquidTabBar @JvmOverloads constructor(
                 if (tabItems.isEmpty()) return true
                 val tabWidth = width / tabItems.size.toFloat()
                 val index = (event.x / tabWidth).toInt().coerceIn(0, tabItems.size - 1)
-                if (index != selectedIndex) {
-                    setSelectedIndex(index)
-                    onTabSelectedListener?.invoke(index)
-                }
+                val changed = index != selectedIndex
+                animateToIndex(index, force = true)
+                if (changed) onTabSelectedListener?.invoke(index)
                 return true
             }
         }
@@ -233,10 +226,23 @@ class LiquidTabBar @JvmOverloads constructor(
         updateConfig()
     }
 
-    // Kept for API compatibility. Direct LiquidGlass mode has no drag/elastic/touch handlers.
-    fun setLiquidDraggableEnabled(enabled: Boolean) = Unit
-    fun setLiquidElasticEnabled(enabled: Boolean) = Unit
-    fun setLiquidTouchEffectEnabled(enabled: Boolean) = Unit
+    fun setLiquidDraggableEnabled(enabled: Boolean) {
+        liquidDraggableEnabled = enabled
+        ensureBubble()
+        bubbleView?.setDraggableEnabled(enabled)
+    }
+
+    fun setLiquidElasticEnabled(enabled: Boolean) {
+        liquidElasticEnabled = enabled
+        ensureBubble()
+        bubbleView?.setElasticEnabled(enabled)
+    }
+
+    fun setLiquidTouchEffectEnabled(enabled: Boolean) {
+        liquidTouchEffectEnabled = enabled
+        ensureBubble()
+        bubbleView?.setTouchEffectEnabled(enabled)
+    }
 
     private fun ensureGlass() {
         if (glass != null) return
@@ -275,6 +281,46 @@ class LiquidTabBar @JvmOverloads constructor(
         }
     }
 
+    private fun ensureBubble() {
+        if (bubbleView != null) return
+        val bubble = LiquidGlassView(context).apply {
+            visibility = View.INVISIBLE
+            setDraggableEnabled(liquidDraggableEnabled)
+            setElasticEnabled(liquidElasticEnabled)
+            setTouchEffectEnabled(liquidTouchEffectEnabled)
+            setOnTouchListener { _, event ->
+                if (tabItems.isEmpty()) return@setOnTouchListener false
+                when (event.actionMasked) {
+                    MotionEvent.ACTION_DOWN -> {
+                        animator?.cancel()
+                        updateAnimatedIndexFromBubble()
+                        parent?.requestDisallowInterceptTouchEvent(true)
+                    }
+                    MotionEvent.ACTION_MOVE -> {
+                        updateAnimatedIndexFromBubble()
+                    }
+                    MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                        val targetIndex = indexFromBubbleCenter()
+                        val changed = targetIndex != selectedIndex
+                        animateToIndex(targetIndex, force = true)
+                        if (changed) onTabSelectedListener?.invoke(targetIndex)
+                    }
+                }
+                false
+            }
+        }
+        addView(bubble)
+        bubbleView = bubble
+        customSource?.let { bubble.bind(it) }
+    }
+
+    private fun removeBubble() {
+        bubbleView?.let {
+            removeView(it)
+            bubbleView = null
+        }
+    }
+
     private fun updateConfig() {
         ensureGlass()
         val currentConfig = config ?: return
@@ -297,21 +343,26 @@ class LiquidTabBar @JvmOverloads constructor(
         currentConfig.TINT_COLOR_BLUE = tintColorBlue
 
         glass?.post { glass?.updateParameters() }
+        syncBubbleConfig()
     }
 
-    private fun animateToIndex(targetIndex: Int) {
+    private fun animateToIndex(targetIndex: Int, force: Boolean = false) {
+        if (tabItems.isEmpty()) return
+        if (!force && targetIndex == selectedIndex) return
         animator?.cancel()
-        val start = selectedIndex.toFloat()
+        val start = animatedIndex
         val end = targetIndex.toFloat()
         animator = ValueAnimator.ofFloat(start, end).apply {
             duration = animationDuration
             addUpdateListener { animation ->
                 animatedIndex = animation.animatedValue as Float
+                moveBubbleToIndex(animatedIndex)
                 invalidate()
             }
             doOnEnd {
                 selectedIndex = targetIndex
                 animatedIndex = selectedIndex.toFloat()
+                moveBubbleToIndex(animatedIndex)
             }
             start()
         }
@@ -326,6 +377,71 @@ class LiquidTabBar @JvmOverloads constructor(
             val right = (i + 1) * tabWidth
             tabRects.add(RectF(left, 0f, right, height.toFloat()))
         }
+    }
+
+    private fun updateBubbleGeometry() {
+        if (tabItems.isEmpty() || width <= 0 || height <= 0) {
+            bubbleView?.visibility = View.INVISIBLE
+            return
+        }
+        ensureBubble()
+        val tabWidth = width / tabItems.size.toFloat()
+        val base = min(tabWidth, height.toFloat())
+        val targetSize = maxOf(Utils.dp2px(resources, 24f), base * 0.72f)
+        val bubble = bubbleView ?: return
+        val sizeInt = targetSize.toInt()
+        val lp = bubble.layoutParams as? LayoutParams
+        if (lp == null || lp.width != sizeInt || lp.height != sizeInt) {
+            bubble.layoutParams = LayoutParams(sizeInt, sizeInt)
+        }
+        bubbleSizePx = targetSize
+        bubble.setCornerRadius(targetSize / 2f)
+        moveBubbleToIndex(animatedIndex)
+        bubble.visibility = View.VISIBLE
+        syncBubbleConfig()
+    }
+
+    private fun syncBubbleConfig() {
+        val bubble = bubbleView ?: return
+        if (bubbleSizePx <= 0f) return
+        bubble.setBlurRadius(blurRadius)
+        bubble.setDispersion(dispersion)
+        bubble.setTintAlpha(tintAlpha)
+        bubble.setTintColorRed(tintColorRed)
+        bubble.setTintColorGreen(tintColorGreen)
+        bubble.setTintColorBlue(tintColorBlue)
+        bubble.setRefractionHeight(min(refractionHeight, bubbleSizePx * 0.45f))
+        bubble.setRefractionOffset(min(abs(refractionOffset), bubbleSizePx * 0.7f))
+    }
+
+    private fun moveBubbleToIndex(index: Float) {
+        val bubble = bubbleView ?: return
+        if (tabItems.isEmpty() || width <= 0 || bubbleSizePx <= 0f) return
+        val tabWidth = width / tabItems.size.toFloat()
+        val clampedIndex = index.coerceIn(0f, (tabItems.size - 1).toFloat())
+        val centerX = (clampedIndex + 0.5f) * tabWidth
+        val tx = centerX - bubbleSizePx / 2f
+        val ty = (height - bubbleSizePx) / 2f
+        bubble.translationX = tx
+        bubble.translationY = ty
+    }
+
+    private fun updateAnimatedIndexFromBubble() {
+        val bubble = bubbleView ?: return
+        if (tabItems.isEmpty() || width <= 0) return
+        val centerX = bubble.x + bubble.width / 2f
+        val tabWidth = width / tabItems.size.toFloat()
+        animatedIndex = ((centerX / tabWidth) - 0.5f)
+            .coerceIn(0f, (tabItems.size - 1).toFloat())
+        invalidate()
+    }
+
+    private fun indexFromBubbleCenter(): Int {
+        val bubble = bubbleView ?: return selectedIndex
+        if (tabItems.isEmpty() || width <= 0) return selectedIndex
+        val centerX = bubble.x + bubble.width / 2f
+        val tabWidth = width / tabItems.size.toFloat()
+        return (centerX / tabWidth).toInt().coerceIn(0, tabItems.size - 1)
     }
 
     private fun chooseBestSource(source: View): View {

@@ -159,7 +159,7 @@ class LiquidGlassViewActivity : AppCompatActivity() {
 //        liquidTabBar.bindBackground(findViewById(R.id.tabBarBackground))
 //        liquidTabBar.bindBackground(null)
         // Customize TabBar appearance
-        liquidTabBar.selectedColor = Color.parseColor("#FF4081")
+        liquidTabBar.selectedColor = Color.RED
         liquidTabBar.unselectedColor = Color.parseColor("#CCCCCC")
         liquidTabBar.animationDuration = 250L
 
