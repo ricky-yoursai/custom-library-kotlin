@@ -50,6 +50,7 @@ class LiquidTabBar @JvmOverloads constructor(
 
     private val tabItems = mutableListOf<TabItem>()
     private var selectedIndex = 0
+    private var pendingSelectedIndex: Int? = null // JIT_PACK@ handle RN prop order (selectedIndex before items)
     private var onTabSelectedListener: ((Int) -> Unit)? = null
 
     // 选中/未选中颜色（选中仅影响文字颜色，不再画背景）
@@ -94,7 +95,11 @@ class LiquidTabBar @JvmOverloads constructor(
         tabItems.clear()
         tabItems.addAll(items)
         tabRects.clear()
-        if (selectedIndex !in tabItems.indices) {
+        val pending = pendingSelectedIndex // JIT_PACK@ apply pending index if provided before items
+        if (pending != null && pending in tabItems.indices) {
+            selectedIndex = pending
+            pendingSelectedIndex = null
+        } else if (selectedIndex !in tabItems.indices) {
             selectedIndex = 0
         }
         animatedIndex = selectedIndex.toFloat()
@@ -107,6 +112,10 @@ class LiquidTabBar @JvmOverloads constructor(
 
     // 设置选中项
     fun setSelectedIndex(index: Int) {
+        if (tabItems.isEmpty()) { // JIT_PACK@ defer until items are set
+            pendingSelectedIndex = index
+            return
+        }
         if (index in 0 until tabItems.size && index != selectedIndex) {
             animateToIndex(index)
         }

@@ -359,6 +359,37 @@ class LiquidGlassView @JvmOverloads constructor(
         }
     }
 
+    // JIT_PACK@ Allow RN to bind to a sensible default background source.
+    fun bindToDefaultBackground() {
+        val source = findSiblingBackgroundSource(this)
+        bind(source)
+    }
+
+    // JIT_PACK@ Find a visible sibling to use as the sampling source.
+    private fun findSiblingBackgroundSource(anchor: View): View? {
+        val parentGroup = anchor.parent as? ViewGroup ?: return null
+        val anchorIndex = parentGroup.indexOfChild(anchor)
+        if (anchorIndex <= 0) return null
+        for (i in anchorIndex - 1 downTo 0) {
+            val sibling = parentGroup.getChildAt(i)
+            if (sibling === this) continue
+            if (containsView(sibling, this)) continue
+            if (sibling.visibility != View.VISIBLE) continue
+            return sibling
+        }
+        return null
+    }
+
+    // JIT_PACK@ Utility to avoid sampling from our own subtree.
+    private fun containsView(root: View, target: View): Boolean {
+        if (root === target) return true
+        if (root !is ViewGroup) return false
+        for (i in 0 until root.childCount) {
+            if (containsView(root.getChildAt(i), target)) return true
+        }
+        return false
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(e: MotionEvent): Boolean {
         if (!draggableEnabled && !touchEffectEnabled) return super.onTouchEvent(e)
