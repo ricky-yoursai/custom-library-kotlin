@@ -16,6 +16,7 @@ import com.yoursai.library.liquid.impl.LiquidGlassimpl
 import java.lang.ref.WeakReference
 
 @SuppressLint("ViewConstructor")
+// LiquidGlass：负责在指定背景之上绘制“液态玻璃”效果的容器
 class LiquidGlass(
     context: Context,
     private val config: Config
@@ -25,6 +26,7 @@ class LiquidGlass(
     private var target: View? = null
     private var listenerAdded = false
 
+    // 预绘制回调：每帧刷新采样和渲染
     private class PreDrawListener(liquidGlass: LiquidGlass) : ViewTreeObserver.OnPreDrawListener {
         private val liquidGlassRef = WeakReference(liquidGlass)
 
@@ -35,6 +37,7 @@ class LiquidGlass(
         }
     }
 
+    // 圆角裁剪的 OutlineProvider（系统层裁剪）
     private class RoundRectOutlineProvider(private val cornerRadius: Float) : ViewOutlineProvider() {
         override fun getOutline(v: View, o: Outline) {
             o.setRoundRect(0, 0, v.width, v.height, cornerRadius)
@@ -48,6 +51,9 @@ class LiquidGlass(
         init()
     }
 
+    /**
+     * 绑定采样目标 View（背景源）
+     */
     fun init(target: View?) {
         this.target?.let { removePreDrawListener() }
 
@@ -71,10 +77,12 @@ class LiquidGlass(
         updateOutlineProvider()
     }
 
+    // 委托给实现类进行绘制
     override fun onDraw(canvas: Canvas) {
         impl?.draw(canvas)
     }
 
+    // 当参数变更时，触发内部刷新
     fun updateParameters() {
         impl?.let {
             it.onPreDraw()
@@ -83,6 +91,7 @@ class LiquidGlass(
         updateOutlineProvider()
     }
 
+    // 更新圆角裁剪
     private fun updateOutlineProvider() {
         if (config.CORNER_RADIUS_PX > 0) {
             outlineProvider = RoundRectOutlineProvider(config.CORNER_RADIUS_PX)
@@ -110,6 +119,7 @@ class LiquidGlass(
         super.onDetachedFromWindow()
     }
 
+    // 添加预绘制监听，确保每帧更新采样
     private fun addPreDrawListener() {
         target?.let { target ->
             if (!listenerAdded) {
@@ -119,6 +129,7 @@ class LiquidGlass(
         }
     }
 
+    // 移除预绘制监听，避免泄漏
     private fun removePreDrawListener() {
         target?.let { target ->
             if (listenerAdded) {

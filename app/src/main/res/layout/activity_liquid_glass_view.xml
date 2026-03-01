@@ -12,19 +12,19 @@
 
     android:layout_height="match_parent">
 
-    <FrameLayout
-        android:id="@+id/liquidGlassBackground"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_alignParentBottom="true">
+<!--    <FrameLayout-->
+<!--        android:id="@+id/liquidGlassBackground"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="200dp"-->
+<!--        android:layout_alignParentBottom="true">-->
 
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:src="@drawable/image"
-            android:scaleType="centerCrop" />
+<!--        <ImageView-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:src="@drawable/image"-->
+<!--            android:scaleType="centerCrop" />-->
 
-    </FrameLayout>
+<!--    </FrameLayout>-->
 
     <FrameLayout
 
@@ -78,10 +78,10 @@
 
                 tools:ignore="RelativeOverlap" />
 
-            <com.yoursai.library.liquid.widget.LiquidTabBar
-                android:id="@+id/liquidTabBar"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"/>
+<!--            <com.yoursai.library.liquid.widget.LiquidTabBar-->
+<!--                android:id="@+id/liquidTabBar"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="50dp"/>-->
 
 
             <LinearLayout

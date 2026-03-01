@@ -1,13 +1,10 @@
 package com.yoursai.custom_library.activity
 
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowInsets
-import android.view.WindowManager
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -20,18 +17,12 @@ import com.google.android.material.slider.Slider
 import com.yoursai.custom_library.R
 import com.yoursai.library.liquid.util.Utils
 import com.yoursai.library.liquid.widget.LiquidGlassView
-import com.yoursai.library.liquid.widget.LiquidTabBar
-import com.yoursai.library.liquid.widget.TabBar
-import com.yoursai.library.liquid.widget.TabItem
 import java.io.IOException
-import java.io.InputStream
 
 class LiquidGlassViewActivity : AppCompatActivity() {
 
     private lateinit var controls: LinearLayout
     private lateinit var liquidGlassView: LiquidGlassView
-    private lateinit var tabBar: TabBar
-    private lateinit var liquidTabBar: LiquidTabBar
 
     private lateinit var setCorners: Slider
     private lateinit var setRefractionHeight: Slider
@@ -87,8 +78,6 @@ class LiquidGlassViewActivity : AppCompatActivity() {
 
     private fun initView() {
         controls = findViewById(R.id.controls)
-//        tabBar = findViewById(R.id.tabBar)
-        liquidTabBar = findViewById(R.id.liquidTabBar)
         button = findViewById(R.id.button)
         images = findViewById(R.id.images)
 
@@ -118,76 +107,8 @@ class LiquidGlassViewActivity : AppCompatActivity() {
         setDispersion.valueTo = 1f
         setDispersion.value = 0.5f
         
-//        setupTabBar()
-        setupLiquidTabBar()
     }
 
-    private fun setupTabBar() {
-        // Customize TabBar appearance
-        tabBar.tabBackgroundColor = Color.parseColor("#80000000")
-        tabBar.selectedColor = Color.parseColor("#FF4081")
-        tabBar.unselectedColor = Color.parseColor("#CCCCCC")
-        tabBar.cornerRadius = 30f
-        tabBar.animationDuration = 250L
-
-        val tabItems = listOf(
-            TabItem(android.R.drawable.ic_menu_camera, "Camera"),
-            TabItem(android.R.drawable.ic_menu_gallery, "Gallery"),
-            TabItem(android.R.drawable.ic_menu_gallery, "Settings"),
-            TabItem(android.R.drawable.ic_menu_info_details, "Info")
-        )
-        
-        tabBar.setItems(tabItems)
-
-        tabBar.setOnTabSelectedListener { index ->
-            when (index) {
-                0 -> Toast.makeText(this, "Camera tab selected", Toast.LENGTH_SHORT).show()
-                1 -> Toast.makeText(this, "Gallery tab selected", Toast.LENGTH_SHORT).show()
-                2 -> Toast.makeText(this, "Settings tab selected", Toast.LENGTH_SHORT).show()
-                3 -> Toast.makeText(this, "Info tab selected", Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
-
-    private fun setupLiquidTabBar() {
-//        val backgroundView = ImageView(this).apply {
-//            setImageResource(R.drawable.image) // 使用你的图片资源
-//            scaleType = ImageView.ScaleType.CENTER_CROP
-//        }
-//        liquidTabBar.bindBackground(backgroundView)
-        liquidTabBar.bindBackground(findViewById(R.id.liquidGlassBackground))
-//        liquidTabBar.bindBackground(findViewById(R.id.tabBarBackground))
-//        liquidTabBar.bindBackground(null)
-        // Customize TabBar appearance
-        liquidTabBar.selectedColor = Color.RED
-        liquidTabBar.unselectedColor = Color.parseColor("#CCCCCC")
-        liquidTabBar.animationDuration = 250L
-
-        val tabItems = listOf(
-            TabItem(android.R.drawable.ic_menu_camera, "Camera"),
-            TabItem(android.R.drawable.ic_menu_gallery, "Gallery"),
-            TabItem(android.R.drawable.ic_menu_gallery, "Settings"),
-            TabItem(android.R.drawable.ic_menu_info_details, "Info")
-        )
-
-        liquidTabBar.setItems(tabItems)
-
-        liquidTabBar.setOnTabSelectedListener { index ->
-            when (index) {
-                0 -> Toast.makeText(this, "Camera tab selected", Toast.LENGTH_SHORT).show()
-                1 -> Toast.makeText(this, "Gallery tab selected", Toast.LENGTH_SHORT).show()
-                2 -> Toast.makeText(this, "Settings tab selected", Toast.LENGTH_SHORT).show()
-                3 -> Toast.makeText(this, "Info tab selected", Toast.LENGTH_SHORT).show()
-            }
-        }
-//        // 可选：自定义液态玻璃效果
-        liquidTabBar.setLiquidCornerRadius(30f)
-        liquidTabBar.setLiquidRefractionHeight(15f)
-        liquidTabBar.setLiquidRefractionOffset(50f)
-        liquidTabBar.setLiquidBlurRadius(2f)
-        liquidTabBar.setLiquidDispersion(0.3f)
-        liquidTabBar.setLiquidTintAlpha(0.1f)
-    }
 
     private fun setView() {
         val controlsParams = controls.layoutParams as ViewGroup.MarginLayoutParams
