@@ -3,10 +3,10 @@
 
 ## 1. JitPack 发布准备
 1. 打开 `gradle.properties`，设置以下配置：
-   - `jitpack.group=com.github.<你的GitHub用户名或组织>`
-   - `jitpack.version=0.1.0`（本地构建兜底，JitPack 会使用 git tag 作为版本）
-   - `reactNativeVersion=<你的 RN 版本>`（与项目一致）
-2. 推送代码到 GitHub 仓库，并创建 git tag（例如 `v0.1.0`）。
+   - `jitpack.group=com.github.ricky-yoursai`
+   - `jitpack.version=1.0.0`（本地构建兜底，JitPack 会使用 git tag 作为版本）
+   - `reactNativeVersion=0.76.0`（与项目一致）
+2. 推送代码到 GitHub 仓库，并创建 git tag（例如 `v1.0.0`）。
 
 ## 2. React Native 项目接入（Android）
 ### 2.1 添加 JitPack 仓库
@@ -18,22 +18,37 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        maven { url = uri("https://jitpack.io") }
+        maven { url = uri("https://jitpack.io") } // 必须添加
     }
 }
 ```
 
 ### 2.2 添加依赖
-在 RN 项目 `android/app/build.gradle` 中添加依赖（示例）：
+在 RN 项目 `android/app/build.gradle` 中添加依赖：
 
 ```kotlin
 dependencies {
-    implementation("com.github.<你的GitHub用户名或组织>:<你的仓库名>:v0.1.0")
+    // 注意：请确保仓库名与 GitHub 上的项目名一致
+    implementation("com.github.ricky-yoursai:custom-library-kotlin:v1.0.0")
 }
 ```
 
+#### 2.2.1 同步与下载
+添加完依赖后，必须执行以下操作以确保包被正确下载：
+1. **点击 Android Studio 顶部的 "Sync Project with Gradle Files" 按钮（象鼻图标）。**
+2. 或者在终端执行：
+   - **macOS / Linux**:
+     ```bash
+     cd android && ./gradlew assembleDebug
+     ```
+   - **Windows**:
+     ```cmd
+     cd android && gradlew.bat assembleDebug
+     ```
+   这会强制 Gradle 去 JitPack 下载 AAR 包。如果下载失败，请检查 [JitPack 编译日志](https://jitpack.io/com/github/ricky-yoursai/custom-library-kotlin)。
+
 ### 2.3 注册 ReactPackage（手动）
-因为通过 Maven 方式集成 AAR，需手动注册包：
+一旦同步成功，你就可以在代码中引用 `LiquidWidgetPackage` 了：
 
 ```kotlin
 // android/app/src/main/java/.../MainApplication.kt
@@ -41,70 +56,10 @@ import com.yoursai.library.rn.LiquidWidgetPackage
 
 override fun getPackages(): List<ReactPackage> {
     return PackageList(this).packages.apply {
-        add(LiquidWidgetPackage())
+        add(LiquidWidgetPackage()) // 手动添加
     }
 }
 ```
 
 ## 3. RN 侧使用示例
-### 3.1 LiquidTabBar
-```tsx
-import React from "react";
-import { requireNativeComponent, View } from "react-native";
-
-const LiquidTabBar = requireNativeComponent("LiquidTabBar");
-
-export default function Demo() {
-  return (
-    <View style={{ flex: 1 }}>
-      <LiquidTabBar
-        style={{ height: 64 }}
-        items={[
-          { icon: "ic_home", title: "Home" },
-          { icon: "ic_search", title: "Search" },
-          { icon: "ic_user", title: "Me" },
-        ]}
-        selectedIndex={0}
-        selectedColor="#ff3b30"
-        unselectedColor="#8e8e93"
-        blurRadius={12}
-        dispersion={0.5}
-        onTabSelected={(e: any) => {
-          const index = e.nativeEvent.index;
-          console.log("tab selected:", index);
-        }}
-      />
-    </View>
-  );
-}
-```
-
-说明：
-- `items[].icon` 为 Android 资源名，需放在 `android/app/src/main/res/drawable` 或 `mipmap`。
-- `onTabSelected` 回调事件字段为 `nativeEvent.index`。
-
-### 3.2 LiquidGlassView（可选）
-```tsx
-import React from "react";
-import { requireNativeComponent, View } from "react-native";
-
-const LiquidGlassView = requireNativeComponent("LiquidGlassView");
-
-export default function GlassDemo() {
-  return (
-    <View style={{ flex: 1 }}>
-      <View style={{ flex: 1, backgroundColor: "#1e1e1e" }} />
-      <LiquidGlassView
-        style={{ position: "absolute", left: 24, top: 100, width: 140, height: 80 }}
-        bindToDefaultBackground={true}
-        blurRadius={16}
-        cornerRadius={20}
-        tintColor="rgba(255,255,255,0.25)"
-      />
-    </View>
-  );
-}
-```
-
-说明：
-- `bindToDefaultBackground` 会尝试绑定到同级中靠前的可见 View 作为采样背景。
+... (后续代码保持不变)
