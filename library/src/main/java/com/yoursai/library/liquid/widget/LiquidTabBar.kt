@@ -20,7 +20,7 @@ import kotlin.math.abs
 import kotlin.math.min
 
 data class TabItem(
-    val icon: Int, // drawable resource id
+    val icon: Int = 0, // drawable resource id (0 means no icon)
     val title: String? = null
 )
 
@@ -159,6 +159,15 @@ class LiquidTabBar @JvmOverloads constructor(
         super.onDraw(canvas)
     }
 
+    override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
+        if (tabItems.isEmpty()) return super.onInterceptTouchEvent(ev)
+        if (ev.actionMasked != MotionEvent.ACTION_DOWN) return super.onInterceptTouchEvent(ev)
+        if (liquidDraggableEnabled && isPointInsideBubble(ev.x, ev.y)) {
+            return false
+        }
+        return true
+    }
+
     // 只绘制图标和文字（选中文字为 selectedColor）
     override fun dispatchDraw(canvas: Canvas) {
         super.dispatchDraw(canvas)
@@ -166,7 +175,9 @@ class LiquidTabBar @JvmOverloads constructor(
 
         for (i in tabItems.indices) {
             val rect = tabRects.getOrNull(i) ?: continue
-            val icon = context.getDrawable(tabItems[i].icon)
+            val iconResId = tabItems[i].icon
+            val icon = if (iconResId != 0) context.getDrawable(iconResId) else null
+            val hasIcon = icon != null
             icon?.let {
                 val iconSize = (rect.width() * 0.4f).toInt()
                 val iconLeft = rect.centerX() - iconSize / 2
@@ -177,7 +188,11 @@ class LiquidTabBar @JvmOverloads constructor(
 
             tabItems[i].title?.let { title ->
                 textPaint.color = if (abs(i - animatedIndex) < 0.5f) selectedColor else unselectedColor
-                val textY = height - 8f * resources.displayMetrics.density
+                val textY = if (hasIcon) {
+                    height - 8f * resources.displayMetrics.density
+                } else {
+                    rect.centerY() + textPaint.textSize * 0.35f
+                }
                 canvas.drawText(title, rect.centerX(), textY, textPaint)
             }
         }
@@ -526,7 +541,7 @@ class LiquidTabBar @JvmOverloads constructor(
 
     // 默认取同层级前一个可见 View 作为采样源
     private fun findDefaultBackgroundSource(): View? {
-        return findSiblingBackgroundSource(this)
+        return findSiblingBackgroundSource(this) ?: (parent as? ViewGroup)
     }
 
     // 找同级之前的兄弟 View 作为采样源
@@ -552,5 +567,15 @@ class LiquidTabBar @JvmOverloads constructor(
             if (containsView(root.getChildAt(i), target)) return true
         }
         return false
+    }
+
+    private fun isPointInsideBubble(x: Float, y: Float): Boolean {
+        val bubble = bubbleView ?: return false
+        if (bubble.visibility != View.VISIBLE) return false
+        val left = bubble.x
+        val top = bubble.y
+        val right = left + bubble.width
+        val bottom = top + bubble.height
+        return x >= left && x <= right && y >= top && y <= bottom
     }
 }

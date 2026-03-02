@@ -1,65 +1,78 @@
 <!-- JIT_PACK@ 使用指南说明：本文件包含 JitPack 与 RN 接入步骤。 -->
-# Library 使用指南（JitPack + React Native）
+# Library 使用指南（JitPack + React Native / Expo）
 
 ## 1. JitPack 发布准备
 1. 打开 `gradle.properties`，设置以下配置：
    - `jitpack.group=com.github.ricky-yoursai`
-   - `jitpack.version=1.0.0`（本地构建兜底，JitPack 会使用 git tag 作为版本）
+   - `jitpack.version=1.0.1`（建议打新 Tag）
    - `reactNativeVersion=0.76.0`（与项目一致）
-2. 推送代码到 GitHub 仓库，并创建 git tag（例如 `v1.0.0`）。
+2. 推送代码到 GitHub 仓库，并创建 git tag（例如 `v1.0.1`）。
 
-## 2. React Native 项目接入（Android）
+## 2. React Native / Expo 项目接入 (Android)
 ### 2.1 添加 JitPack 仓库
-在 RN 项目 `android/settings.gradle` 或 `android/build.gradle` 的仓库配置中添加：
-
+在项目 `android/settings.gradle` 中添加：
 ```kotlin
-// settings.gradle (Gradle 7+)
 dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        maven { url = uri("https://jitpack.io") } // 必须添加
+        maven { url = uri("https://jitpack.io") }
     }
 }
 ```
 
 ### 2.2 添加依赖
-在 RN 项目 `android/app/build.gradle` 中添加依赖：
-
+在 `android/app/build.gradle` 中添加：
 ```kotlin
 dependencies {
-    // 注意：请确保仓库名与 GitHub 上的项目名一致
-    implementation("com.github.ricky-yoursai:custom-library-kotlin:v1.0.0")
+    implementation("com.github.ricky-yoursai.custom-library-kotlin:library:v1.0.1")
 }
 ```
 
-#### 2.2.1 同步与下载
-添加完依赖后，必须执行以下操作以确保包被正确下载：
-1. **点击 Android Studio 顶部的 "Sync Project with Gradle Files" 按钮（象鼻图标）。**
-2. 或者在终端执行：
-   - **macOS / Linux**:
-     ```bash
-     cd android && ./gradlew assembleDebug
-     ```
-   - **Windows**:
-     ```cmd
-     cd android && gradlew.bat assembleDebug
-     ```
-   这会强制 Gradle 去 JitPack 下载 AAR 包。如果下载失败，请检查 [JitPack 编译日志](https://jitpack.io/com/github/ricky-yoursai/custom-library-kotlin)。
+## 3. Expo 项目特别说明 (新架构支持)
+本库已升级支持 **Expo Modules API**，在最新的 Expo 项目中：
 
-### 2.3 注册 ReactPackage（手动）
-一旦同步成功，你就可以在代码中引用 `LiquidWidgetPackage` 了：
+### 3.1 无需手动注册
+你 **不需要** 在 `MainApplication.kt` 中手动添加 `LiquidWidgetPackage`。Expo 会通过 `expo-module.config.json` 自动完成链接。
 
-```kotlin
-// android/app/src/main/java/.../MainApplication.kt
-import com.yoursai.library.rn.LiquidWidgetPackage
+### 3.2 JS 侧使用建议
+虽然 `requireNativeComponent` 仍然可用，但在 Expo 模块中，建议使用统一的导出方式：
 
-override fun getPackages(): List<ReactPackage> {
-    return PackageList(this).packages.apply {
-        add(LiquidWidgetPackage()) // 手动添加
-    }
+```tsx
+// components/LiquidTabBar.tsx
+import { requireNativeViewManager } from 'expo-modules-core';
+import React from 'react';
+
+// 使用 Expo 提供的视图管理器
+const NativeView = requireNativeViewManager('LiquidTabBar');
+
+export default function LiquidTabBar(props: any) {
+  return <NativeView {...props} />;
 }
 ```
 
-## 3. RN 侧使用示例
-... (后续代码保持不变)
+### 3.3 示例代码
+```tsx
+import LiquidTabBar from './components/LiquidTabBar';
+
+export default function App() {
+  return (
+    <LiquidTabBar
+      style={{ height: 64, width: '100%' }}
+      items={[
+        { icon: 'ic_home', title: 'Home' },
+        { icon: 'ic_search', title: 'Search' }
+      ]}
+      selectedIndex={0}
+      selectedColor="#ff3b30"
+      onTabSelected={({ nativeEvent }: any) => {
+        console.log('Selected:', nativeEvent.index);
+      }}
+    />
+  );
+}
+```
+
+## 4. 常见问题
+- **View config not found**: 请确保已经执行了 `npx expo prebuild` 并且 Android 项目成功同步。
+- **Tried to register two views**: 请检查是否在 `MainApplication.kt` 中重复手动注册了该包，Expo 模块会自动注册。

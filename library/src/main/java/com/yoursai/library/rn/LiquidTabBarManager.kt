@@ -41,11 +41,13 @@ class LiquidTabBarManager : SimpleViewManager<LiquidTabBar>() {
         for (i in 0 until items.size()) {
             val map = items.getMap(i) ?: continue
             val iconResId = resolveIcon(view.context, map)
-            if (iconResId == 0) continue
             val title = if (map.hasKey("title") && !map.isNull("title")) {
                 map.getString("title")
             } else {
                 null
+            }
+            if (iconResId == 0 && title.isNullOrBlank()) {
+                continue
             }
             resolved.add(TabItem(iconResId, title))
         }
@@ -140,6 +142,13 @@ class LiquidTabBarManager : SimpleViewManager<LiquidTabBar>() {
     @ReactProp(name = "touchEffectEnabled", defaultBoolean = false)
     fun setTouchEffectEnabled(view: LiquidTabBar, enabled: Boolean) {
         view.setLiquidTouchEffectEnabled(enabled)
+    }
+
+    @ReactProp(name = "bindToDefaultBackground", defaultBoolean = true)
+    fun bindToDefaultBackground(view: LiquidTabBar, enabled: Boolean) {
+        if (enabled) {
+            view.post { view.bindBackground(null) }
+        }
     }
 
     override fun getExportedCustomDirectEventTypeConstants(): Map<String, Any> {
