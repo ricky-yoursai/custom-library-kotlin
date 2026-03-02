@@ -11,6 +11,7 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewConfiguration
 import android.widget.FrameLayout
 import androidx.core.animation.doOnEnd
 import com.yoursai.library.Config
@@ -74,6 +75,10 @@ class LiquidTabBar @JvmOverloads constructor(
     private var liquidDraggableEnabled = true
     private var liquidElasticEnabled = true
     private var liquidTouchEffectEnabled = false
+    private var bubbleDownRawX = 0f
+    private var bubbleDownRawY = 0f
+    private var bubbleDragged = false
+    private val touchSlop by lazy { ViewConfiguration.get(context).scaledTouchSlop.toFloat() }
 
     init {
         setWillNotDraw(false)
@@ -201,7 +206,10 @@ class LiquidTabBar @JvmOverloads constructor(
     // 点击切换 Tab（并触发气泡动画）
     override fun onTouchEvent(event: MotionEvent): Boolean {
         when (event.action) {
-            MotionEvent.ACTION_DOWN -> return true
+            MotionEvent.ACTION_DOWN -> {
+                parent?.requestDisallowInterceptTouchEvent(true)
+                return true
+            }
             MotionEvent.ACTION_UP -> {
                 if (tabItems.isEmpty()) return true
                 val tabWidth = width / tabItems.size.toFloat()
@@ -209,6 +217,11 @@ class LiquidTabBar @JvmOverloads constructor(
                 val changed = index != selectedIndex
                 animateToIndex(index, force = true)
                 if (changed) onTabSelectedListener?.invoke(index)
+                parent?.requestDisallowInterceptTouchEvent(false)
+                return true
+            }
+            MotionEvent.ACTION_CANCEL -> {
+                parent?.requestDisallowInterceptTouchEvent(false)
                 return true
             }
         }
@@ -348,17 +361,30 @@ class LiquidTabBar @JvmOverloads constructor(
                 when (event.actionMasked) {
                     MotionEvent.ACTION_DOWN -> {
                         animator?.cancel()
+                        bubbleDownRawX = event.rawX
+                        bubbleDownRawY = event.rawY
+                        bubbleDragged = false
                         updateAnimatedIndexFromBubble()
                         parent?.requestDisallowInterceptTouchEvent(true)
                     }
                     MotionEvent.ACTION_MOVE -> {
+                        val dx = abs(event.rawX - bubbleDownRawX)
+                        val dy = abs(event.rawY - bubbleDownRawY)
+                        if (dx > touchSlop || dy > touchSlop) {
+                            bubbleDragged = true
+                        }
                         updateAnimatedIndexFromBubble()
                     }
                     MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                        val targetIndex = indexFromBubbleCenter()
+                        val targetIndex = when {
+                            event.actionMasked == MotionEvent.ACTION_CANCEL -> selectedIndex
+                            bubbleDragged -> indexFromBubbleCenter()
+                            else -> indexFromX(this.x + event.x)
+                        }
                         val changed = targetIndex != selectedIndex
                         animateToIndex(targetIndex, force = true)
                         if (changed) onTabSelectedListener?.invoke(targetIndex)
+                        parent?.requestDisallowInterceptTouchEvent(false)
                     }
                 }
                 false
@@ -514,8 +540,13 @@ class LiquidTabBar @JvmOverloads constructor(
         val bubble = bubbleView ?: return selectedIndex
         if (tabItems.isEmpty() || width <= 0) return selectedIndex
         val centerX = bubble.x + bubble.width / 2f
+        return indexFromX(centerX)
+    }
+
+    private fun indexFromX(x: Float): Int {
+        if (tabItems.isEmpty() || width <= 0) return selectedIndex
         val tabWidth = width / tabItems.size.toFloat()
-        return (centerX / tabWidth).toInt().coerceIn(0, tabItems.size - 1)
+        return (x / tabWidth).toInt().coerceIn(0, tabItems.size - 1)
     }
 
     // 选择最合适的采样源（避免自己采样自己）
