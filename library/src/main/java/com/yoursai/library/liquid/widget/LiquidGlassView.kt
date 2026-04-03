@@ -361,7 +361,7 @@ class LiquidGlassView @JvmOverloads constructor(
 
     // JIT_PACK@ Allow RN to bind to a sensible default background source.
     fun bindToDefaultBackground() {
-        val source = findSiblingBackgroundSource(this)
+        val source = findNearestBackgroundSource(this)
         bind(source)
     }
 
@@ -376,6 +376,17 @@ class LiquidGlassView @JvmOverloads constructor(
             if (containsView(sibling, this)) continue
             if (sibling.visibility != View.VISIBLE) continue
             return sibling
+        }
+        return null
+    }
+
+    // JIT_PACK@ React Navigation often nests the glass view inside multiple wrappers,
+    // so walk upward until we find a visible sibling outside our subtree.
+    private fun findNearestBackgroundSource(anchor: View): View? {
+        var current: View? = anchor
+        while (current != null) {
+            findSiblingBackgroundSource(current)?.let { return it }
+            current = current.parent as? View
         }
         return null
     }

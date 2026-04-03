@@ -102,7 +102,7 @@ class LiquidTabBarManager : SimpleViewManager<LiquidTabBar>() {
     @ReactProp(name = "blurRadius", defaultFloat = -1f)
     fun setBlurRadius(view: LiquidTabBar, value: Float) {
         if (value >= 0f) {
-            view.setLiquidBlurRadius(PixelUtil.toPixelFromDIP(value))
+            view.setLiquidBlurRadius(value)
         }
     }
 
@@ -126,7 +126,6 @@ class LiquidTabBarManager : SimpleViewManager<LiquidTabBar>() {
         view.setLiquidTintColorRed(Color.red(color) / 255f)
         view.setLiquidTintColorGreen(Color.green(color) / 255f)
         view.setLiquidTintColorBlue(Color.blue(color) / 255f)
-        view.setLiquidTintAlpha(Color.alpha(color) / 255f)
     }
 
     @ReactProp(name = "draggableEnabled", defaultBoolean = true)

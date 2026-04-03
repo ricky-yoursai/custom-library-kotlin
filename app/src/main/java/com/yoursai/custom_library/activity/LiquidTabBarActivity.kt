@@ -19,7 +19,7 @@ class LiquidTabBarActivity : AppCompatActivity() {
         Utils.transparentNavigationBar(window)
 
         val liquidTabBar: LiquidTabBar = findViewById(R.id.liquidTabBar)
-        liquidTabBar.bindBackground(findViewById(R.id.pageBackground))
+        liquidTabBar.bindBackground(findViewById(R.id.rootLayout))
 
         liquidTabBar.selectedColor = Color.RED
         liquidTabBar.unselectedColor = Color.parseColor("#D9D9D9")
@@ -49,6 +49,9 @@ class LiquidTabBarActivity : AppCompatActivity() {
         liquidTabBar.setLiquidRefractionOffset(Utils.dp2px(resources, 70f))
         liquidTabBar.setLiquidBlurRadius(0.01f)
         liquidTabBar.setLiquidDispersion(0.5f)
-        liquidTabBar.setLiquidTintAlpha(0f)
+        liquidTabBar.setLiquidTintAlpha(0.1f) // Slightly increase tint alpha to make it visible on solid background
+        liquidTabBar.setLiquidTintColorRed(1.0f)
+        liquidTabBar.setLiquidTintColorGreen(1.0f)
+        liquidTabBar.setLiquidTintColorBlue(1.0f)
     }
 }

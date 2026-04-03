@@ -39,7 +39,7 @@ class LiquidGlassViewManager : SimpleViewManager<LiquidGlassView>() {
     @ReactProp(name = "blurRadius", defaultFloat = -1f)
     fun setBlurRadius(view: LiquidGlassView, value: Float) {
         if (value >= 0f) {
-            view.setBlurRadius(PixelUtil.toPixelFromDIP(value))
+            view.setBlurRadius(value)
         }
     }
 
@@ -63,7 +63,6 @@ class LiquidGlassViewManager : SimpleViewManager<LiquidGlassView>() {
         view.setTintColorRed(Color.red(color) / 255f)
         view.setTintColorGreen(Color.green(color) / 255f)
         view.setTintColorBlue(Color.blue(color) / 255f)
-        view.setTintAlpha(Color.alpha(color) / 255f)
     }
 
     @ReactProp(name = "draggableEnabled", defaultBoolean = false)

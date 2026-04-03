@@ -552,18 +552,18 @@ class LiquidTabBar @JvmOverloads constructor(
     // 选择最合适的采样源（避免自己采样自己）
     private fun chooseBestSource(source: View): View {
         if (source === this || source === glass) {
-            findSiblingBackgroundSource(this)?.let { return it }
+            findNearestBackgroundSource(this)?.let { return it }
             return source
         }
 
         if (source is ViewGroup) {
             if (containsView(source, this)) {
-                findSiblingBackgroundSource(this)?.let { return it }
+                findNearestBackgroundSource(this)?.let { return it }
                 return source
             }
             val isLikelyMaskLayer = source.childCount == 0 && source.background is ColorDrawable
             if (isLikelyMaskLayer) {
-                findSiblingBackgroundSource(source)?.let { return it }
+                findNearestBackgroundSource(source)?.let { return it }
             }
         }
 
@@ -572,7 +572,7 @@ class LiquidTabBar @JvmOverloads constructor(
 
     // 默认取同层级前一个可见 View 作为采样源
     private fun findDefaultBackgroundSource(): View? {
-        return findSiblingBackgroundSource(this) ?: (parent as? ViewGroup)
+        return findNearestBackgroundSource(this) ?: (parent as? ViewGroup)
     }
 
     // 找同级之前的兄弟 View 作为采样源
@@ -586,6 +586,17 @@ class LiquidTabBar @JvmOverloads constructor(
             if (containsView(sibling, this)) continue
             if (sibling.visibility != View.VISIBLE) continue
             return sibling
+        }
+        return null
+    }
+
+    // JIT_PACK@ React Navigation often nests the tab bar inside wrapper views,
+    // so walk up the ancestor chain until we find a usable sibling background.
+    private fun findNearestBackgroundSource(anchor: View): View? {
+        var current: View? = anchor
+        while (current != null) {
+            findSiblingBackgroundSource(current)?.let { return it }
+            current = current.parent as? View
         }
         return null
     }

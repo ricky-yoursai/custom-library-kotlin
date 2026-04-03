@@ -1,16 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rootLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#f0f0f0"
     tools:context=".activity.LiquidTabBarActivity">
-
-    <ImageView
-        android:id="@+id/pageBackground"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="centerCrop"
-        android:src="@drawable/image" />
 
     <TextView
         android:id="@+id/titleText"
@@ -29,6 +24,18 @@
         android:layout_height="88dp"
         android:layout_alignParentBottom="true"
         android:background="@android:color/transparent" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="30dp"
+        android:alpha="0.5"
+        android:gravity="center"
+        android:text="LIQUID GLASS EFFECT\nREFRACTION BLUR TEST\nSWIPE TO SEE MAGIC"
+        android:textColor="#FF0000"
+        android:textSize="32sp"
+        android:textStyle="bold" />
 
     <com.yoursai.library.liquid.widget.LiquidTabBar
         android:id="@+id/liquidTabBar"
