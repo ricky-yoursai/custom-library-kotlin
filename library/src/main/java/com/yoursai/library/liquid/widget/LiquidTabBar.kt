@@ -579,8 +579,15 @@ class LiquidTabBar @JvmOverloads constructor(
     private fun findSiblingBackgroundSource(anchor: View): View? {
         val parentGroup = anchor.parent as? ViewGroup ?: return null
         val anchorIndex = parentGroup.indexOfChild(anchor)
-        if (anchorIndex <= 0) return null
+        if (anchorIndex < 0) return null
         for (i in anchorIndex - 1 downTo 0) {
+            val sibling = parentGroup.getChildAt(i)
+            if (sibling === this || sibling === glass) continue
+            if (containsView(sibling, this)) continue
+            if (sibling.visibility != View.VISIBLE) continue
+            return sibling
+        }
+        for (i in anchorIndex + 1 until parentGroup.childCount) {
             val sibling = parentGroup.getChildAt(i)
             if (sibling === this || sibling === glass) continue
             if (containsView(sibling, this)) continue
