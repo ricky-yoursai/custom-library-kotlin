@@ -13,6 +13,7 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
 import com.yoursai.library.Config
 import com.yoursai.library.liquid.LiquidGlass
 import com.yoursai.library.liquid.util.LiquidTracker
@@ -26,6 +27,7 @@ class LiquidGlassView @JvmOverloads constructor(
 
     private var glass: LiquidGlass? = null
     private var customSource: View? = null
+    private var windowSamplingWindow: Window? = null
     private val context: Context = context
 
     private var cornerRadius = Utils.dp2px(resources, 40f)
@@ -119,10 +121,21 @@ class LiquidGlassView @JvmOverloads constructor(
      * @param source View
      */
     fun bind(source: View?) {
+        windowSamplingWindow = null
         this.customSource = source
         if (glass != null) {
             glass!!.init(source)
         }
+    }
+
+    fun bindToActivityWindow(window: Window?) {
+        if (window == null) {
+            bindToDefaultBackground()
+            return
+        }
+        windowSamplingWindow = window
+        customSource = window.decorView.findViewById(android.R.id.content) ?: window.decorView
+        glass?.init(window, customSource)
     }
 
     /**
@@ -346,10 +359,14 @@ class LiquidGlassView @JvmOverloads constructor(
         addView(glass, lp)
 
         val source = customSource
-        if (source == null) {
+        val window = windowSamplingWindow
+        if (window != null) {
+            glass?.init(window, source)
             return
         }
-        glass?.init(source)
+        if (source != null) {
+            glass?.init(source)
+        }
     }
 
     private fun removeGlass() {

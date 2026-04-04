@@ -9,10 +9,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewOutlineProvider
 import android.view.ViewTreeObserver
+import android.view.Window
 import android.widget.FrameLayout
 import com.yoursai.library.Config
 import com.yoursai.library.liquid.impl.Impl
 import com.yoursai.library.liquid.impl.LiquidGlassimpl
+import com.yoursai.library.liquid.impl.WindowPixelCopyLiquidGlassImpl
 import java.lang.ref.WeakReference
 
 @SuppressLint("ViewConstructor")
@@ -61,6 +63,23 @@ class LiquidGlass(
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && target != null) {
             impl = LiquidGlassimpl(this, target, config)
+            addPreDrawListener()
+            requestLayout()
+            invalidate()
+        } else {
+            impl?.dispose()
+            impl = null
+            removePreDrawListener()
+        }
+    }
+
+    fun init(window: Window, anchor: View?) {
+        this.target?.let { removePreDrawListener() }
+
+        this.target = anchor ?: window.decorView
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            impl = WindowPixelCopyLiquidGlassImpl(this, window, config)
             addPreDrawListener()
             requestLayout()
             invalidate()

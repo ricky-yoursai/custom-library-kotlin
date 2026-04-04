@@ -12,6 +12,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewConfiguration
+import android.view.Window
 import android.widget.FrameLayout
 import androidx.core.animation.doOnEnd
 import com.yoursai.library.Config
@@ -36,6 +37,7 @@ class LiquidTabBar @JvmOverloads constructor(
     private var glass: LiquidGlass? = null
     private var config: Config? = null
     private var customSource: View? = null
+    private var windowSamplingWindow: Window? = null
     private var hasExplicitSourceBinding = false
 
     // 液态玻璃参数
@@ -87,12 +89,25 @@ class LiquidTabBar @JvmOverloads constructor(
     // 绑定采样背景（决定玻璃采样的来源）
     fun bindBackground(source: View?) {
         hasExplicitSourceBinding = true
+        windowSamplingWindow = null
         customSource = when {
             source != null -> chooseBestSource(source)
             else -> findDefaultBackgroundSource()
         }
         glass?.init(customSource)
         bubbleView?.bind(customSource)
+    }
+
+    fun bindToActivityWindow(window: Window?) {
+        if (window == null) {
+            bindBackground(null)
+            return
+        }
+        hasExplicitSourceBinding = true
+        windowSamplingWindow = window
+        customSource = window.decorView.findViewById(android.R.id.content) ?: window.decorView
+        glass?.init(window, customSource)
+        bubbleView?.bindToActivityWindow(window)
     }
 
     // 设置 TabItem 列表
@@ -138,8 +153,14 @@ class LiquidTabBar @JvmOverloads constructor(
         if (!hasExplicitSourceBinding && customSource == null) {
             customSource = findDefaultBackgroundSource()
         }
-        glass?.init(customSource)
-        bubbleView?.bind(customSource)
+        val window = windowSamplingWindow
+        if (window != null) {
+            glass?.init(window, customSource)
+            bubbleView?.bindToActivityWindow(window)
+        } else {
+            glass?.init(customSource)
+            bubbleView?.bind(customSource)
+        }
     }
 
     override fun onDetachedFromWindow() {
@@ -393,6 +414,7 @@ class LiquidTabBar @JvmOverloads constructor(
         addView(bubble)
         bubbleView = bubble
         customSource?.let { bubble.bind(it) }
+        windowSamplingWindow?.let { bubble.bindToActivityWindow(it) }
     }
 
     private fun removeBubble() {

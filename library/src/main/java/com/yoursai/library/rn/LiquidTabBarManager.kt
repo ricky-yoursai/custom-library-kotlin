@@ -146,7 +146,15 @@ class LiquidTabBarManager : SimpleViewManager<LiquidTabBar>() {
     @ReactProp(name = "bindToDefaultBackground", defaultBoolean = true)
     fun bindToDefaultBackground(view: LiquidTabBar, enabled: Boolean) {
         if (enabled) {
-            view.post { view.bindBackground(null) }
+            val reactContext = view.context as? ThemedReactContext
+            val window = reactContext?.currentActivity?.window
+            view.post {
+                if (window != null) {
+                    view.bindToActivityWindow(window)
+                } else {
+                    view.bindBackground(null)
+                }
+            }
         }
     }
 

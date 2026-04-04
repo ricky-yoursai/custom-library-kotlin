@@ -83,7 +83,15 @@ class LiquidGlassViewManager : SimpleViewManager<LiquidGlassView>() {
     @ReactProp(name = "bindToDefaultBackground", defaultBoolean = false)
     fun bindToDefaultBackground(view: LiquidGlassView, enabled: Boolean) {
         if (enabled) {
-            view.post { view.bindToDefaultBackground() }
+            val reactContext = view.context as? ThemedReactContext
+            val window = reactContext?.currentActivity?.window
+            view.post {
+                if (window != null) {
+                    view.bindToActivityWindow(window)
+                } else {
+                    view.bindToDefaultBackground()
+                }
+            }
         }
     }
 }
