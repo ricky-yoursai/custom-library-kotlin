@@ -25,7 +25,8 @@ dependencyResolutionManagement {
 在 `android/app/build.gradle` 中添加：
 ```kotlin
 dependencies {
-    implementation("com.github.ricky-yoursai.custom-library-kotlin:library:v1.0.1")
+    // JitPack 发布产物为仓库根 AAR：group = com.github.ricky-yoursai，artifact = 仓库名
+    implementation("com.github.ricky-yoursai:custom-library-kotlin:v1.0.6")
 }
 ```
 
@@ -36,17 +37,18 @@ dependencies {
 你 **不需要** 在 `MainApplication.kt` 中手动添加 `LiquidWidgetPackage`。Expo 会通过 `expo-module.config.json` 自动完成链接。
 
 ### 3.2 JS 侧使用建议
-虽然 `requireNativeComponent` 仍然可用，但在 Expo 模块中，建议使用统一的导出方式：
+`LiquidTabBar` 由 **ReactPackage（LiquidWidgetPackage）** 注册，属于经典 RN ViewManager，**不要**使用 `expo-modules-core` 的 `requireNativeViewManager`（会去找 `ViewManagerAdapter_LiquidTabBar` 并报错）。请使用 React Native 自带的：
 
 ```tsx
 // components/LiquidTabBar.tsx
-import { requireNativeViewManager } from 'expo-modules-core';
 import React from 'react';
+import { requireNativeComponent, type ViewProps } from 'react-native';
 
-// 使用 Expo 提供的视图管理器
-const NativeView = requireNativeViewManager('LiquidTabBar');
+type Props = ViewProps & { /* …与 LiquidTabBarManager 的 @ReactProp 一致… */ };
 
-export default function LiquidTabBar(props: any) {
+const NativeView = requireNativeComponent<Props>('LiquidTabBar');
+
+export default function LiquidTabBar(props: Props) {
   return <NativeView {...props} />;
 }
 ```

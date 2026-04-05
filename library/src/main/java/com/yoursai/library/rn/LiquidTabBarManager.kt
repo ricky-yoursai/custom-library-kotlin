@@ -2,6 +2,7 @@ package com.yoursai.library.rn
 
 import android.content.Context
 import android.graphics.Color
+import android.view.Window
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.bridge.ReadableMap
@@ -145,17 +146,29 @@ class LiquidTabBarManager : SimpleViewManager<LiquidTabBar>() {
 
     @ReactProp(name = "bindToDefaultBackground", defaultBoolean = true)
     fun bindToDefaultBackground(view: LiquidTabBar, enabled: Boolean) {
-        if (enabled) {
-            val reactContext = view.context as? ThemedReactContext
-            val window = reactContext?.currentActivity?.window
+        if (!enabled) return
+        val reactContext = view.context as? ThemedReactContext ?: return
+        val window = reactContext.currentActivity?.window ?: return
+        // 双 post：等 RN 完成首帧 layout，避免 sibling 宽高为 0
+        view.post {
             view.post {
-                if (window != null) {
-                    view.bindToActivityWindow(window)
-                } else {
-                    view.bindBackground(null)
-                }
+                bindLiquidSamplingTarget(view, window)
             }
         }
+    }
+
+    private fun bindLiquidSamplingTarget(view: LiquidTabBar, window: Window) {
+        val sibling = ReactNativeSiblingBackgroundFinder.findFirstSiblingBehind(view)
+        if (sibling != null && sibling.width > 1 && sibling.height > 1) {
+            view.bindBackground(sibling)
+            return
+        }
+        val reactRoot = ReactNativeContentRootFinder.findReactRootView(window)
+        if (reactRoot != null && reactRoot.width > 1 && reactRoot.height > 1) {
+            view.bindBackground(reactRoot)
+            return
+        }
+        view.bindToActivityWindow(window)
     }
 
     override fun getExportedCustomDirectEventTypeConstants(): Map<String, Any> {
